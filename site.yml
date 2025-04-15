@@ -4,48 +4,20 @@
   become: true
   pre_tasks:
 
-  - name: update repo cache (Ubuntu)
+  - name: update repository index  (Ubuntu)
     tags: always
     apt:
       update_cache: yes
     changed_when: false
 
-
-- hosts: workstations
+- hosts: all
   become: true
-  tasks:
-
-  - name: install unzip
-    package:
-      name: unzip
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
-      dest: /usr/local/bin
-      remote-src: yes
-      mode: 0755
-      owner: root
-      group: root
+  roles:
+    - base
 
 
 - hosts: web_servers
   become: true
-  tasks:
+  roles:
+    - web_servers
 
-  - name: install apache and php for Ubuntu servers
-    tags: apache,apache2,ubuntu
-    apt:
-      name: 
-        - apache2
-        - libapache2-mod-php
-      state: latest
-   
-  - name: copy default html file for site
-    tags: apache, apache2,httpd
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
